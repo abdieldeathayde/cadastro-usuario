@@ -21,6 +21,9 @@ public class UsuarioController {
 
     @GetMapping
     public ResponseEntity<Usuario> buscarUsuarioPorEmail(@RequestParam String email) {
+        if (email == null) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok(usuarioService.buscarUsuarioPorEmail(email));
 
     }
@@ -35,6 +38,9 @@ public class UsuarioController {
     @PutMapping
     public ResponseEntity<Void> atualizarUsuarioPorId(@RequestParam Integer id, @RequestBody Usuario usuario) {
         usuarioService.atualizarUsuarioPorId(id, usuario);
+        if (usuarioService == null) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok().build();
 
     }
