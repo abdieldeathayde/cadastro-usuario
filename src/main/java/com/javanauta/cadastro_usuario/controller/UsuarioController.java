@@ -1,5 +1,5 @@
 package com.javanauta.cadastro_usuario.controller;
-
+import org.springframework.http.HttpStatus;
 import com.javanauta.cadastro_usuario.business.UsuarioService;
 import com.javanauta.cadastro_usuario.infraestructure.entities.Usuario;
 import lombok.RequiredArgsConstructor;
@@ -14,26 +14,29 @@ public class UsuarioController {
     private final UsuarioService usuarioService;
 
     @PostMapping
-    public ResponseEntity<Void> salvarUsuario(@RequestBody Usuario usuario) {
+    public ResponseEntity<String> salvarUsuario(@RequestBody Usuario usuario) {
         usuarioService.salvarUsuario(usuario);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.CREATED).body("User created successfully.");
     }
 
     @GetMapping
     public ResponseEntity<Usuario> buscarUsuarioPorEmail(@RequestParam String email) {
         return ResponseEntity.ok(usuarioService.buscarUsuarioPorEmail(email));
+
     }
 
     @DeleteMapping
-    public ResponseEntity<Void> deletarUsuarioPorEmail(@RequestParam String email) {
+    public ResponseEntity<String> deletarUsuarioPorEmail(@RequestParam String email) {
         usuarioService.deletarUsuarioPorEmail(email);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("User deleted successfully.");
+
     }
 
     @PutMapping
     public ResponseEntity<Void> atualizarUsuarioPorId(@RequestParam Integer id, @RequestBody Usuario usuario) {
         usuarioService.atualizarUsuarioPorId(id, usuario);
         return ResponseEntity.ok().build();
+
     }
 
 }
