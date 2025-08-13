@@ -1,40 +1,56 @@
 package com.javanauta.cadastro_usuario.business;
 
+import com.javanauta.cadastro_usuario.dto.AtualizaUsuarioDto;
+import com.javanauta.cadastro_usuario.dto.CriarUsuarioDto;
+import com.javanauta.cadastro_usuario.dto.response.UsuarioDto;
 import com.javanauta.cadastro_usuario.infraestructure.entities.Usuario;
 import com.javanauta.cadastro_usuario.infraestructure.repository.UsuarioRepository;
+import com.javanauta.cadastro_usuario.mapper.UsuarioMapper;
+import com.javanauta.cadastro_usuario.validador.UsuarioValidador;
+
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
+@RequiredArgsConstructor
 @Service
 public class UsuarioService {
-    private final UsuarioRepository repository;
 
-    public UsuarioService(UsuarioRepository repository) {
-        this.repository = repository;
-    }
+	private final UsuarioRepository usuarioRepository;
+	private final UsuarioValidador usuarioValidador;
+	private final UsuarioMapper usuarioMapper;
 
-    public void salvarUsuario(Usuario usuario) {
-        repository.saveAndFlush(usuario);
-    }
+	public UsuarioDto salvarUsuario(CriarUsuarioDto dto) {
+		Usuario usuario = usuarioMapper.toEntity(dto);
+		usuarioRepository.save(usuario);
+		return usuarioMapper.toDto(usuario);
+	}
 
-    public Usuario buscarUsuarioPorEmail(String email) {
-        return repository.findByEmail(email).orElseThrow(
-                () -> new RuntimeException("Email não encontrado!")
-        );
-    }
+	public UsuarioDto buscarUsuarioPorEmail(String email) {
+		Usuario usuario = usuarioValidador.buscaUsuarioOuLancaException(email);
+		return usuarioMapper.toDto(usuario);
+	}
 
-    public void deletarUsuarioPorEmail(String email) {
-        repository.deleteByEmail(email);
-    }
+	public List<UsuarioDto> buscarTodos() {
+		List<Usuario> user = usuarioRepository.findAll();
+		usuarioValidador.validaSeListaEstaVazia(user);
+		return usuarioMapper.converteLista(user);
+	}
 
-    public void atualizarUsuarioPorId(Integer id, Usuario usuario) {
-        Usuario usuarioEntity = repository.findById(id).orElseThrow(() ->
-                new RuntimeException("Usuário não encontrado"));
-        Usuario usuarioAtualizado = Usuario.builder()
-                .email(usuario.getEmail() != null ? usuario.getEmail() : usuarioEntity.getEmail())
-                .nome(usuario.getNome() != null ? usuario.getNome() : usuarioEntity.getNome())
-                .id(usuarioEntity.getId())
-                .build();
 
-        repository.saveAndFlush(usuarioAtualizado);
-    }
+
+	public void deletarUsuarioPorEmail(String email) {
+		Usuario usuario = usuarioValidador.buscaUsuarioOuLancaException(email);
+		usuarioRepository.delete(usuario);
+	}
+
+
+	public UsuarioDto atualizarUsuarioPorId(Integer id, AtualizaUsuarioDto dto) {
+		Usuario usuario = usuarioValidador.validaSeUsuarioExiste(id);
+		usuarioMapper.atualizaDto(dto, usuario);
+		usuarioRepository.save(usuario);
+		return usuarioMapper.toDto(usuario);
+	}
 }
