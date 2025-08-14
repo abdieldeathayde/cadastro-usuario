@@ -53,4 +53,17 @@ public class UsuarioService {
 		usuarioRepository.save(usuario);
 		return usuarioMapper.toDto(usuario);
 	}
+
+	public List<UsuarioDto> salvarUsuarios(List<CriarUsuarioDto> dtoList) {
+		// Converte a lista de DTOs de criação para entidades Usuario
+		List<Usuario> usuarios = usuarioMapper.toEntityList(dtoList);
+
+		// Salva todos de uma vez no banco
+		List<Usuario> usuariosSalvos = usuarioRepository.saveAll(usuarios);
+
+		// Converte a lista salva para DTOs de resposta
+		return usuarioMapper.converteLista(usuariosSalvos);
+	}
+
+
 }

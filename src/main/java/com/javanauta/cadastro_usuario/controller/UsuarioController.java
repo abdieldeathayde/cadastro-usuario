@@ -31,6 +31,12 @@ public class UsuarioController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(usuarioSalvo);
 	}
 
+	@PostMapping("/salvarUsuarios")
+	public ResponseEntity<List<UsuarioDto>> salvarUsuarios(@RequestBody @Valid List<CriarUsuarioDto> dto) {
+		List<UsuarioDto> usuariosSalvos = usuarioService.salvarUsuarios(dto);
+		return ResponseEntity.status(HttpStatus.CREATED).body(usuariosSalvos);
+	}
+
 	@GetMapping
 	public ResponseEntity<UsuarioDto> buscarUsuarioPorEmail(
 			@RequestParam @NotBlank(message = "O email é obrigatorio.") String email) {
@@ -40,10 +46,10 @@ public class UsuarioController {
 	}
 
 	@GetMapping("/filtrar")
-    public ResponseEntity<List<UsuarioDto>> listarTodos(){
-        List<UsuarioDto> usuarioDto = usuarioService.buscarTodos();
+	public ResponseEntity<List<UsuarioDto>> listarTodos(){
+		List<UsuarioDto> usuarioDto = usuarioService.buscarTodos();
 		return ResponseEntity.ok(usuarioDto);
-    }
+	}
 
 
 	@DeleteMapping

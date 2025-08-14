@@ -14,10 +14,12 @@ import java.util.List;
 public interface UsuarioMapper {
 
 	UsuarioDto toDto(Usuario entity);
-	
+
+	List<Usuario> toEntityList(List<CriarUsuarioDto> dtoList);
+
 	Usuario toEntity(CriarUsuarioDto dto);
 	
-	void atualizaDto(AtualizaUsuarioDto dto, @MappingTarget Usuario entity);
+	Usuario atualizaDto(AtualizaUsuarioDto dto, @MappingTarget Usuario entity);
 
 	List<UsuarioDto> converteLista(List<Usuario> entity);
 }
